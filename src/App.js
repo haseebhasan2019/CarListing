@@ -1,26 +1,38 @@
 import React, {useState, useRef } from 'react'
-import TodoList from './TodoList'
+import CarList from './CarList'
 import {v4 as uuidv4} from 'uuid'
 
 
 function App() {
-  const [todos, setTodos] = useState([])
-  const todoNameRef = useRef()
+  const [cars, setListings] = useState([])
+  const make = useRef()
+  const model = useRef()
+  const year = useRef()
+  const price = useRef()
+  const seller = useRef()
+
   
-  function handleAddTodo(e) {
-    const name = todoNameRef.current.value
-    if (name === '') return 
-    setTodos(prevTodos => {
-      return [...prevTodos, {id: uuidv4(), name: name, complete: false}]
+  function handleAddListing(e) {
+    const name = make.current.value
+    const name2 = model.current.value
+    if (name === '' || name2 === '') return 
+    setListings(prevListing => {
+      return [...prevListing, {id: uuidv4(), name: name + " " + name2, complete: false}]
     })
-    todoNameRef.current.value = null
+    make.current.value = null
+    model.current.value = null
   }
   
   return (
     <>
-      <TodoList todos = {todos}/>
-      <input ref={todoNameRef} type="text" />
-      <button onClick={handleAddTodo}>Add Listing</button>
+      <CarList cars = {cars}/>
+      <input ref={make} type="text" placeholder="make"/>
+      <input ref={model} type="text" placeholder="model"/>
+      <input ref={year} type="text" placeholder="year"/>
+      <input ref={price} type="text" placeholder="price"/>
+      <input ref={seller} type="text" placeholder="seller"/>
+
+      <button onClick={handleAddListing}>Add Listing</button>
     </>
   )
 }
