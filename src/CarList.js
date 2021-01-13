@@ -1,10 +1,10 @@
 import React from 'react'
 import Car from './Car'
 
-export default function CarList( {cars}) {
+export default function CarList( {cars, toggleComplete}) {
     return (
-        cars.map(todo =>{
-            return <Car key={todo.id} todo = {todo} />
+        cars.map(car =>{
+            return <Car key={car.id} car = {car} toggleComplete={toggleComplete}/>
         })
     )
 }

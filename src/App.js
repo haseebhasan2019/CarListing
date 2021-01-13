@@ -20,14 +20,28 @@ function App() {
     const name5 = seller.current.value
     if (name === '' || name2 === '' || name3 === '' || name4 === '' || name5 === '') return 
     setListings(prevListing => {
-      return [...prevListing, {id: uuidv4(), name: "•   " + name + " " + name2 + " " + name3
-      + ": " + name4 + " -" + name5, complete: false}]
+      return [...prevListing, {id: uuidv4(), name: name + " " + name2 + " " + name3
+      + ": " + name4 + " -" + name5 + "     ", completed: false}]
     })
     make.current.value = null
     model.current.value = null
     year.current.value = null
     price.current.value = null
     seller.current.value = null
+  }
+
+  function toggleComplete(id) {
+    setListings(
+      cars.map(car => {
+        if (car.id === id) {
+          return {
+            ...car,
+            completed: !car.completed
+          };
+        }
+        return car;
+      })
+    );
   }
   
   return (
@@ -42,7 +56,7 @@ function App() {
 
       <button onClick={handleAddListing}>Add Listing</button>
       <h2>Our Listings:</h2>
-      <CarList cars = {cars}/>
+      <CarList cars = {cars} toggleComplete={toggleComplete}/>
 
     </>
   )

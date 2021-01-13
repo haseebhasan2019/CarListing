@@ -1,9 +1,18 @@
 import React from 'react'
 
-export default function Car({todo}) {
+export default function Car({car, toggleComplete}) {
+    
+    function handleClick() {
+        toggleComplete(car.id);
+    }
+    
     return (
         <div>
-            {todo.name}
+            <li
+                style={{
+                    textDecoration: car.completed ? "line-through" : null
+                }}
+            >{car.name}<button onClick={handleClick}>Sell</button></li>
         </div>
     )
 }
