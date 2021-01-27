@@ -1,16 +1,36 @@
-import React, {useState, useRef } from 'react'
+import React, {useState, useRef} from 'react'
 import CarList from './CarList'
 import {v4 as uuidv4} from 'uuid'
+import Axios from "axios";
 
 
 function App() {
+  // useEffect(() => {
+  //   fetch('/listings')
+  //   .then(response => 
+  //     response.json().then(data => {
+  //       console.log(data);
+  //     })
+  //   );
+  // }, []); , useEffect
+
+  const [dblistings, setdbListings] = useState("");
+
+  const getListings = () => {
+    Axios.get("http://localhost:5000/listings").then(
+      (response) => {
+        console.log(response);
+        setdbListings(response.data.listings.make);
+      }    
+    );
+  };
+
   const [cars, setListings] = useState([])
   const make = useRef()
   const model = useRef()
   const year = useRef()
   const price = useRef()
   const seller = useRef()
-
   
   function handleAddListing(e) {
     const name = make.current.value
@@ -55,9 +75,11 @@ function App() {
       <input ref={seller} type="text" placeholder="seller"/>
 
       <button onClick={handleAddListing}>Add Listing</button>
+      <button onClick={getListings}>Load Listings</button>
+
       <h2>Our Listings:</h2>
       <CarList cars = {cars} toggleComplete={toggleComplete}/>
-
+      <div>{dblistings}</div>
     </>
   )
 }
