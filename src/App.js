@@ -1,53 +1,89 @@
-import React, {useState, useRef} from 'react'
+import React, {useState, useRef, useEffect} from 'react'
 import CarList from './CarList'
+import StatList from './StatList'
 import {v4 as uuidv4} from 'uuid'
-import Axios from "axios";
-
+// import Axios from "axios";
 
 function App() {
-  // useEffect(() => {
-  //   fetch('/listings')
-  //   .then(response => 
-  //     response.json().then(data => {
-  //       console.log(data);
-  //     })
-  //   );
-  // }, []); , useEffect
-
-  const [dblistings, setdbListings] = useState("");
-
-  const getListings = () => {
-    Axios.get("http://localhost:5000/listings").then(
-      (response) => {
-        console.log(response);
-        setdbListings(response.data.listings.make);
-      }    
-    );
-  };
-
+  
   const [cars, setListings] = useState([])
+
   const make = useRef()
   const model = useRef()
   const year = useRef()
   const price = useRef()
   const seller = useRef()
+  let request;
+
+  useEffect(() => {
+    fetch("http://localhost:5000/listings")
+    .then(response => 
+      response.json().then(data => {
+        console.log(data);
+        data.listings.forEach((datum) => {
+          setListings(prevListing => {
+            return [...prevListing, {id: datum._id, name: datum.make + " " + datum.model + " " + datum.year
+            + ": $" + datum.price + " -" + datum.seller + "     ", completed: false}]
+          })
+        })
+      })
+    );
+  }, [request]); 
   
-  function handleAddListing(e) {
+  // function handleAddListing(e) {
+  //   const name = make.current.value
+  //   const name2 = model.current.value
+  //   const name3 = year.current.value
+  //   const name4 = price.current.value
+  //   const name5 = seller.current.value
+  //   //Post to Database
+
+  //   if (name === '' || name2 === '' || name3 === '' || name4 === '' || name5 === '') return 
+  //   setListings(prevListing => {
+  //     return [...prevListing, {id: uuidv4(), name: name + " " + name2 + " " + name3
+  //     + ": " + name4 + " -" + name5 + "     ", completed: false}]
+  //   })
+
+  // }
+
+  const handleAddListing = () => {
     const name = make.current.value
     const name2 = model.current.value
     const name3 = year.current.value
     const name4 = price.current.value
     const name5 = seller.current.value
-    if (name === '' || name2 === '' || name3 === '' || name4 === '' || name5 === '') return 
-    setListings(prevListing => {
-      return [...prevListing, {id: uuidv4(), name: name + " " + name2 + " " + name3
-      + ": " + name4 + " -" + name5 + "     ", completed: false}]
-    })
+    request = {
+      method: 'POST', 
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+          make: name, 
+          model: name2, 
+          year: name3, 
+          price: name4, 
+          seller: name5
+      })
+    }
+    fetch("http://localhost:5000/listings", request)
     make.current.value = null
     model.current.value = null
     year.current.value = null
     price.current.value = null
     seller.current.value = null
+  }
+
+  const [stats, setStats] = useState([])
+  const getStats = () => {
+    fetch("http://localhost:5000/listings/stats")
+    .then(response => 
+      response.json().then(data => {          
+        data.stats.forEach((datum) => {
+          setStats(prevStat => {
+              return [...prevStat, {name: datum.make + " : " 
+              + datum.count}]
+          })
+        })
+      })
+    )
   }
 
   function toggleComplete(id) {
@@ -63,7 +99,7 @@ function App() {
       })
     );
   }
-  
+
   return (
     <>
       <h1>Welcome to Haseeb's Automobile Listings!</h1>
@@ -75,11 +111,12 @@ function App() {
       <input ref={seller} type="text" placeholder="seller"/>
 
       <button onClick={handleAddListing}>Add Listing</button>
-      <button onClick={getListings}>Load Listings</button>
+      <button onClick={getStats}>Get Stats</button>
+      <div>{stats}</div>
+      {/* <StatList stats = {stats}/> */}
 
       <h2>Our Listings:</h2>
       <CarList cars = {cars} toggleComplete={toggleComplete}/>
-      <div>{dblistings}</div>
     </>
   )
 }
