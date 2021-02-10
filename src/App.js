@@ -1,7 +1,6 @@
 import React, {useState, useRef, useEffect} from 'react'
 import CarList from './CarList'
 import StatList from './StatList'
-import {v4 as uuidv4} from 'uuid'
 // import Axios from "axios";
 
 function App() {
@@ -23,7 +22,7 @@ function App() {
         data.listings.forEach((datum) => {
           setListings(prevListing => {
             return [...prevListing, {id: datum._id, name: datum.make + " " + datum.model + " " + datum.year
-            + ": $" + datum.price + " -" + datum.seller + "     ", completed: false}]
+            + ": $" + datum.price + " -" + datum.seller + "     ", completed: datum.sold}]
           })
         })
       })
@@ -77,10 +76,10 @@ function App() {
     .then(response => 
       response.json().then(data => {          
         data.stats.forEach((datum) => {
-          setStats(prevStat => {
-              return [...prevStat, {name: datum.make + " : " 
+          setStats(prevStat => 
+               [...prevStat, {name: datum.make + " : " 
               + datum.count}]
-          })
+          )
         })
       })
     )
@@ -112,8 +111,7 @@ function App() {
 
       <button onClick={handleAddListing}>Add Listing</button>
       <button onClick={getStats}>Get Stats</button>
-      <div>{stats}</div>
-      {/* <StatList stats = {stats}/> */}
+      <StatList stats = {stats}/>
 
       <h2>Our Listings:</h2>
       <CarList cars = {cars} toggleComplete={toggleComplete}/>
