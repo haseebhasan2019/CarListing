@@ -15,12 +15,6 @@ db = client.cars
 collection = db.listings  # can switch to users for that info
 
 
-class statistics:
-    def __init__(self, carMake, count):
-        self.carMake = carMake
-        self.count = count
-
-
 # upsert user
 db.users.update_one({
     '_id': ObjectId('5ffcd26135312bec513e5ade')
@@ -79,6 +73,15 @@ def add_listing():
 # Get /listings/stats - return the number of listings for each make (aggregate)
 @app.route('/listings/stats')
 def stats():
+    agg_result = collection.aggregate( 
+    [{ 
+    "$group" :  
+        {"_id" : "$make",  
+         "count" : {"$sum" : 1} 
+         }} 
+    ])
+    return json.dumps(list(agg_result))
+    '''
     output = {}
     jsonoutput = ""
     documentos = collection.find()
@@ -88,9 +91,11 @@ def stats():
         else:
             output[str(entry['make'])] = 1
     for keys,values in output.items():
-        jsonoutput += json.dumps({'make': keys, 'count': values}) + ","
+        jsonoutput += json.dumps({'_id': keys, 'count': values}) + ","
     jsonoutput = jsonoutput[:-1]
-    return "{\"stats\":[" + jsonoutput + "]}"
+    return "[" + jsonoutput + "]"
+    '''
+
 
 # Delete /listings/<_id> - mark a listing as sold
 @app.route('/listings/<id>', methods=['DELETE'])

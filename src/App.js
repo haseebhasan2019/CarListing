@@ -75,9 +75,9 @@ function App() {
     fetch("http://localhost:5000/listings/stats")
     .then(response => 
       response.json().then(data => {          
-        data.stats.forEach((datum) => {
+        data.forEach((datum) => {
           setStats(prevStat => 
-               [...prevStat, {name: datum.make + " : " 
+               [...prevStat, {name: datum._id + " : " 
               + datum.count}]
           )
         })
