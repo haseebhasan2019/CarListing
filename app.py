@@ -102,7 +102,7 @@ def stats():
 def sold_by_id(id):
     target = str(id)
     documents = collection.find()
-
+    #can I use findOneAndUpdate?
     for document in documents:
         if str(document['_id']) == target:
             if str(document['sold']) == "false":

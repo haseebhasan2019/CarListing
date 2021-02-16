@@ -22,28 +22,12 @@ function App() {
         data.listings.forEach((datum) => {
           setListings(prevListing => {
             return [...prevListing, {id: datum._id, name: datum.make + " " + datum.model + " " + datum.year
-            + ": $" + datum.price + " -" + datum.seller + "     ", completed: datum.sold}]
+            + ": $" + datum.price + " -" + datum.seller + "     ", completed: (datum.sold === 'true')}]
           })
         })
       })
     );
   }, [request]); 
-  
-  // function handleAddListing(e) {
-  //   const name = make.current.value
-  //   const name2 = model.current.value
-  //   const name3 = year.current.value
-  //   const name4 = price.current.value
-  //   const name5 = seller.current.value
-  //   //Post to Database
-
-  //   if (name === '' || name2 === '' || name3 === '' || name4 === '' || name5 === '') return 
-  //   setListings(prevListing => {
-  //     return [...prevListing, {id: uuidv4(), name: name + " " + name2 + " " + name3
-  //     + ": " + name4 + " -" + name5 + "     ", completed: false}]
-  //   })
-
-  // }
 
   const handleAddListing = () => {
     const name = make.current.value
@@ -85,18 +69,26 @@ function App() {
     )
   }
 
-  function toggleComplete(id) {
-    setListings(
-      cars.map(car => {
-        if (car.id === id) {
-          return {
-            ...car,
-            completed: !car.completed
-          };
-        }
-        return car;
-      })
-    );
+  // When the sold button is hit, this goes through listings and changes the completed field for id
+  // function toggleComplete(id) {
+  const toggleComplete = (id) => {
+    //console.log(id)
+    request = {
+      method: 'DELETE', 
+      headers: {'Content-Type': 'application/json'}
+    }
+    fetch("http://localhost:5000/listings/"+id, request)
+    // setListings(
+    //   cars.map(car => {
+    //     if (car.id === id) {
+    //       return {
+    //         ...car,
+    //         completed: !car.completed
+    //       };
+    //     }
+    //     return car;
+    //   })
+    // );
   }
 
   return (
@@ -111,6 +103,7 @@ function App() {
 
       <button onClick={handleAddListing}>Add Listing</button>
       <button onClick={getStats}>Get Stats</button>
+      
       <StatList stats = {stats}/>
 
       <h2>Our Listings:</h2>
