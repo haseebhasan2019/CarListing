@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react'
+import React, {useState, useRef, useEffect, } from 'react'
 import CarList from './CarList'
 import StatList from './StatList'
 // import Axios from "axios";
@@ -6,6 +6,7 @@ import StatList from './StatList'
 function App() {
   
   const [cars, setListings] = useState([])
+
 
   const make = useRef()
   const model = useRef()
@@ -47,6 +48,17 @@ function App() {
       })
     }
     fetch("http://localhost:5000/listings", request)
+    .then(response => 
+      response.json().then(data => {
+        console.log(data);
+        data.listings.forEach((datum) => {
+          setListings(prevListing => {
+            return [...prevListing, {id: datum._id, name: datum.make + " " + datum.model + " " + datum.year
+            + ": $" + datum.price + " -" + datum.seller + "     ", completed: (datum.sold === 'true')}]
+          })
+        })
+      })
+    );
     make.current.value = null
     model.current.value = null
     year.current.value = null
@@ -90,26 +102,25 @@ function App() {
     //   })
     // );
   }
+    return (
+      <>
+        <h1>Welcome to Haseeb's Automobile Listings!</h1>
+        <h2>Add a Listing:</h2>
+        <input ref={make} type="text" placeholder="make"/>
+        <input ref={model} type="text" placeholder="model"/>
+        <input ref={year} type="text" placeholder="year"/>
+        <input ref={price} type="text" placeholder="price"/>
+        <input ref={seller} type="text" placeholder="seller"/>
 
-  return (
-    <>
-      <h1>Welcome to Haseeb's Automobile Listings!</h1>
-      <h2>Add a Listing:</h2>
-      <input ref={make} type="text" placeholder="make"/>
-      <input ref={model} type="text" placeholder="model"/>
-      <input ref={year} type="text" placeholder="year"/>
-      <input ref={price} type="text" placeholder="price"/>
-      <input ref={seller} type="text" placeholder="seller"/>
+        <button onClick={handleAddListing}>Add Listing</button>
+        <button onClick={getStats}>Get Stats</button>
+        
+        <StatList stats = {stats}/>
 
-      <button onClick={handleAddListing}>Add Listing</button>
-      <button onClick={getStats}>Get Stats</button>
-      
-      <StatList stats = {stats}/>
-
-      <h2>Our Listings:</h2>
-      <CarList cars = {cars} toggleComplete={toggleComplete}/>
-    </>
-  )
+        <h2>Our Listings:</h2>
+        <CarList cars = {cars} toggleComplete={toggleComplete}/>
+      </>
+    )
 }
 
 export default App;
